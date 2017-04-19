@@ -101,57 +101,66 @@ input = """37107287533902102798797998220837590246510135740250\
 
 BASE_TEN = 10
 
+
 def parse_input_as_str(input):
-	nums = []
-	j = 0
-	for i in range(0, 100):
-		nums.append(input[j:j+50])
-		j += 50
-	return nums
+    nums = []
+    j = 0
+    for i in range(0, 100):
+        nums.append(input[j:j+50])
+        j += 50
+    return nums
+
 
 def sum_str_digits(n1, n2):
-	num1 = [n1] # nonlocal
-	num2 = [n2] # nonlocal
-	carry = [0] # nonlocal
-	def sum():
-		d1 = 0 if not len(num1[0]) else int(num1[0][-1])
-		d2 = 0 if not len(num2[0]) else int(num2[0][-1])
-		digit_sum = d1 + d2 + carry[0]
-		rem = digit_sum % BASE_TEN
-		carry[0] = (digit_sum) / BASE_TEN
-		num1[0] = num1[0][:len(num1[0]) - 1]
-		num2[0] = num2[0][:len(num2[0]) - 1]
-		return str(rem)
-	return sum
+    num1 = [n1]  # nonlocal
+    num2 = [n2]  # nonlocal
+    carry = [0]  # nonlocal
+
+    def sum():
+        d1 = 0 if not len(num1[0]) else int(num1[0][-1])
+        d2 = 0 if not len(num2[0]) else int(num2[0][-1])
+        digit_sum = d1 + d2 + carry[0]
+        rem = digit_sum % BASE_TEN
+        carry[0] = (digit_sum) / BASE_TEN
+        num1[0] = num1[0][:len(num1[0]) - 1]
+        num2[0] = num2[0][:len(num2[0]) - 1]
+        return str(rem)
+    return sum
+
 
 def sum_str_nums(n1, n2):
-	sum = 0
-	sum_digit_func = sum_str_digits(n1, n2)
-	max_digit_num = max(n1, n2, key = lambda x: len(x))
-	sum_ls = [sum_digit_func() for k in range(0, len(max_digit_num) + 1)]
-	return ''.join(sum_ls[::-1]).lstrip('0')
+    sum_digit_func = sum_str_digits(n1, n2)
+    max_digit_num = max(n1, n2, key=lambda x: len(x))
+    sum_ls = [sum_digit_func() for k in range(0, len(max_digit_num) + 1)]
+    return ''.join(sum_ls[::-1]).lstrip('0')
+
 
 def sum_nums_iter(nums):
-	sum_func = lambda i, j: sum_str_nums(i, j)
-	sum_str = reduce(sum_func, nums) 
-	return sum_str
+    sum_func = lambda i, j: sum_str_nums(i, j)
+    sum_str = reduce(sum_func, nums)
+    return sum_str
+
 
 def sum_naive(s_ls):
-	sum_func = lambda x, y: x + y
-	num_ls = [int(s) for s in s_ls]
-	return reduce(sum_func, num_ls)
+    sum_func = lambda x, y: x + y
+    num_ls = [int(s) for s in s_ls]
+    return reduce(sum_func, num_ls)
+
 
 def foo(x):
-	excess = [x]
-	def bar():
-		excess[0] += 1
-		print excess
-	return bar
+    excess = [x]
+
+    def bar():
+        excess[0] += 1
+        print excess
+    return bar
+
 
 def main():
-	num_str = parse_input_as_str(input)
-	print sum_naive(num_str)
-	print sum_nums_iter(num_str)
+    num_str = parse_input_as_str(input)
+    print sum_naive(num_str)
+    print sum_nums_iter(num_str)
+
 
 if __name__ == "__main__":
-	main()
+    main()

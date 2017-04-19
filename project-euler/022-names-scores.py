@@ -1,4 +1,4 @@
-from commons import coroutine
+from util.commons import coroutine
 
 
 ASCII_ALPHA_START = 65

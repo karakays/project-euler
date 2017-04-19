@@ -1,4 +1,4 @@
-from factors import find_divisors
+from util.factors import find_divisors
 
 
 def find_proper_divisors(n):

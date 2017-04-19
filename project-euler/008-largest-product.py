@@ -21,23 +21,21 @@ input_digit = "73167176531330624919225119674426574742355349194934\
 05886116467109405077541002256983155200055935729725\
 71636269561882670428252483600823257530420752963450"
 
-def main():	
-	i = 0	
-	j = 13
-	max = -1
 
-	while j <= len(input_digit):
-		s = input_digit[i:j]
-		
-		m = reduce(lambda x, y : int(x) * int(y), s)
+def main():
+    i = 0
+    j = 13
+    max = -1
+    while j <= len(input_digit):
+        s = input_digit[i:j]
+        m = reduce(lambda x, y: int(x) * int(y), s)
+        if(m > max):
+            max = m
+        i += 1
+        j += 1
 
-		if(m > max):
-			max = m
+    print('Sol is', max)
 
-		i += 1
-		j += 1
-
-	print('Sol is', max)
 
 if __name__ == '__main__':
-	main()
+    main()

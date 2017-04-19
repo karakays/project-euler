@@ -22,78 +22,84 @@ input = "08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08\n\
 X_LEN = 20
 Y_LEN = 20
 ADJ_LEN = 4
-multiply_func = lambda x, y : x * y
+multiply_func = lambda x, y: x * y
+
 
 def coroutine(func):
-	def start(*args, **kwargs):
-		g = func(*args, **kwargs)
-		g.next()
-		return g 
-	return start
+    def start(*args, **kwargs):
+        g = func(*args, **kwargs)
+        g.next()
+        return g
+    return start
+
 
 @coroutine
 def split_lines(dlmt='\n'):
-	result = None
-	ln = (yield result)
-	result = ln.split(dlmt)
+    result = None
+    ln = (yield result)
+    result = ln.split(dlmt)
+
 
 def main():
-	def find_max_horz(i, j):
-		mul_h_1 = 0 if j + 3 >= 20  else \
-			mtrx_d[i][j] * mtrx_d[i][j + 1] * mtrx_d[i][j + 2] * mtrx_d[i][j + 3]
+    def find_max_horz(i, j):
+        mul_h_1 = 0 if j + 3 >= 20 else \
+            mtrx_d[i][j] * mtrx_d[i][j + 1] * \
+            mtrx_d[i][j + 2] * mtrx_d[i][j + 3]
+        mul_h_2 = 0 if j - 3 < 0 else \
+            mtrx_d[i][j] * mtrx_d[i][j - 1] * \
+            mtrx_d[i][j - 2] * mtrx_d[i][j - 3]
+        return max(mul_h_1, mul_h_2)
 
-		mul_h_2 = 0 if j - 3 < 0  else \
-			mtrx_d[i][j] * mtrx_d[i][j - 1] * mtrx_d[i][j - 2] * mtrx_d[i][j - 3]
-		
-		return max(mul_h_1, mul_h_2)
+    def find_max_vert(i, j):
+        mul_v_1 = 0 if i + 3 >= 20 else \
+            mtrx_d[i][j] * mtrx_d[i + 1][j] * \
+            mtrx_d[i + 2][j] * mtrx_d[i + 3][j]
+        mul_v_2 = 0 if i - 3 < 0 else \
+            mtrx_d[i][j] * mtrx_d[i - 1][j] * \
+            mtrx_d[i - 2][j] * mtrx_d[i - 3][j]
+        return max(mul_v_1, mul_v_2)
 
-	def find_max_vert(i, j):
-		mul_v_1 = 0 if i + 3 >= 20  else \
-			mtrx_d[i][j] * mtrx_d[i + 1][j] * mtrx_d[i + 2][j] * mtrx_d[i + 3][j]
+    def find_max_diag(i, j):
+        mul_d_1 = 0 if i + 3 >= 20 or j + 3 >= 20 else \
+            mtrx_d[i][j] * mtrx_d[i + 1][j + 1] * \
+            mtrx_d[i + 2][j + 2] * mtrx_d[i + 3][j + 3]
+        mul_d_2 = 0 if i - 3 < 0 or j - 3 < 0 else \
+            mtrx_d[i][j] * mtrx_d[i - 1][j - 1] * \
+            mtrx_d[i - 2][j - 2] * mtrx_d[i - 3][j - 3]
+        mul_d_3 = 0 if i + 3 >= 20 or j - 3 < 0 else \
+            mtrx_d[i][j] * mtrx_d[i + 1][j - 1] * \
+            mtrx_d[i + 2][j - 2] * mtrx_d[i + 3][j - 3]
+        mul_d_4 = 0 if i - 3 < 0 or j + 3 >= 20 else \
+            mtrx_d[i][j] * mtrx_d[i - 1][j + 1] * \
+            mtrx_d[i - 2][j + 2] * mtrx_d[i - 3][j + 3]
+        return max(mul_d_1, mul_d_2, mul_d_3, mul_d_4)
 
-		mul_v_2 = 0 if i - 3 < 0  else \
-			mtrx_d[i][j] * mtrx_d[i - 1][j] * mtrx_d[i - 2][j] * mtrx_d[i - 3][j]
-		
-		return max(mul_v_1, mul_v_2)
+    grid = input.replace(' ', '')
+    mtrx = [grid[i:i+(X_LEN * 2)]
+            for i in xrange(0, X_LEN * 2 * Y_LEN, X_LEN * 2)]
 
-	def find_max_diag(i, j):
-		mul_d_1 = 0 if i + 3 >= 20 or j + 3 >= 20 else \
-			mtrx_d[i][j] * mtrx_d[i + 1][j + 1] * mtrx_d[i + 2][j + 2] * mtrx_d[i + 3][j + 3]
+    mtrx_d = []
+    for elem in mtrx:
+        line_d = []
+        for i in xrange(0, 40, 2):
+            n = int(elem[i:i+2])
+            line_d.append(n)
+        mtrx_d.append(line_d)
 
-		mul_d_2 = 0  if i - 3 < 0 or j - 3 < 0 else \
-			 mtrx_d[i][j] * mtrx_d[i - 1][j - 1] * mtrx_d[i - 2][j - 2] * mtrx_d[i - 3][j - 3]
+    max_n = 0
 
-		mul_d_3 = 0 if i + 3 >= 20 or j - 3 < 0 else \
-			mtrx_d[i][j] * mtrx_d[i + 1][j - 1] * mtrx_d[i + 2][j - 2] * mtrx_d[i + 3][j - 3]
+    for i in range(0, Y_LEN):
+        for j in range(0, X_LEN):
+            c = max(find_max_horz(i, j),
+                    find_max_vert(i, j),
+                    find_max_diag(i, j))
+            if c > max_n:
+                max_n = c
+            print max_n
 
-		mul_d_4 = 0 if i - 3 < 0 or j + 3 >= 20 else \
-			mtrx_d[i][j] * mtrx_d[i - 1][j + 1] * mtrx_d[i - 2][j + 2] * mtrx_d[i - 3][j + 3]
-
-		return max(mul_d_1, mul_d_2, mul_d_3, mul_d_4)
-
-	grid = input.replace(' ', '')
-	mtrx = [grid[i:i+(X_LEN * 2)] for i in xrange(0, X_LEN * 2 * Y_LEN, X_LEN * 2)]
-
-	mtrx_d = []	
-	for elem in mtrx:
-		line_d = []
-		for i in xrange(0, 40, 2):
-			n = int(elem[i:i+2])
-			line_d.append(n)
-		mtrx_d.append(line_d)
-
-	max_n = 0
-
-	for i in range(0, Y_LEN):
-		for j in range(0, X_LEN):
-			c = max(find_max_horz(i, j), find_max_vert(i, j), find_max_diag(i, j))
-			if c > max_n:
-				max_n = c
-			print max_n
 
 if __name__ == '__main__':
-	##main()
-	sl = split_lines()
-	lines = sl.send(input)
-	sl.close()
-	print lines
+    sl = split_lines()
+    lines = sl.send(input)
+    sl.close()
+    print lines
