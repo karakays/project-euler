@@ -2,7 +2,6 @@
 
 from util.performance import log_performance as log_perform
 
-indent = 0
 fibo_memoize = []
 
 
@@ -49,7 +48,7 @@ def fibo_series_even_sum(limit):
 
 def main():
     print('Answer with recursive is %s' %
-                            fibo_series_even_sum_recursive(4000000))
+            fibo_series_even_sum_recursive(4000000))
     print('Answer with generator is {0}'.format(fibo_series_even_sum(4000000)))
 
 
